@@ -1,0 +1,326 @@
+basePath: /
+consumes:
+- application/json
+- multipart/form-data
+definitions:
+  Error:
+    description: Error Error
+    properties:
+      attributes:
+        additionalProperties:
+          type: string
+        description: values for error code placeholders
+        type: object
+        x-go-name: Attributes
+      code:
+        description: error code
+        type: string
+        x-go-name: Code
+      detail:
+        description: a human-readable explanation specific to this occurrence of the
+          problem.
+        type: string
+        x-go-name: Detail
+    type: object
+    x-go-package: github.com/xan-mortum/apimediaservice/gen/models
+  ReadCloser:
+    allOf:
+    - properties:
+        Close:
+          type: string
+      type: object
+    - type: object
+    - properties:
+        Close:
+          type: string
+      type: object
+    - type: object
+    title: ReadCloser is the interface that groups the basic Read and Close methods.
+    type: object
+    x-go-package: io
+  Resize:
+    description: Resize Error
+    properties:
+      original:
+        description: original
+        type: string
+        x-go-name: Original
+      resized:
+        description: resized
+        type: string
+        x-go-name: Resized
+    type: object
+    x-go-package: github.com/xan-mortum/apimediaservice/gen/models
+host: localhost:8085
+info:
+  description: |-
+    Schemes:
+    http
+  title: apimediaservice
+  version: 1.0.0
+paths:
+  /token:
+    get:
+      description: Token token API
+      operationId: token
+  /v1/files:
+    get:
+      description: Files files API
+      operationId: files
+      parameters:
+      - description: User's token
+        in: query
+        name: Token
+        required: true
+        type: string
+  /v1/resize:
+    post:
+      description: Resize resize API
+      operationId: resize
+      parameters:
+      - description: Param of file resize.
+        format: int64
+        in: formData
+        name: Resize
+        required: true
+        type: integer
+      - description: User's token
+        in: formData
+        name: Token
+        required: true
+        type: string
+      - $ref: '#/definitions/ReadCloser'
+        description: The file to upload.
+        in: formData
+        name: Upfile
+  /v1/resize_exists:
+    post:
+      description: ResizeExists resize exists API
+      operationId: resizeExists
+  /v2/files:
+    get:
+      description: V2files v2files API
+      operationId: v2files
+      parameters:
+      - description: User's token
+        in: query
+        name: Token
+        required: true
+        type: string
+  /v2/resize:
+    post:
+      description: V2resize v2resize API
+      operationId: v2resize
+      parameters:
+      - in: formData
+        name: File
+        required: true
+        type: string
+      - description: Param of file resize.
+        format: int64
+        in: formData
+        name: Resize
+        required: true
+        type: integer
+      - in: formData
+        name: Token
+        required: true
+        type: string
+  /v2/result:
+    get:
+      description: Result result API
+      operationId: result
+      parameters:
+      - description: Uexecution id
+        in: query
+        name: Execution
+        required: true
+        type: string
+      - description: User's token
+        in: query
+        name: Token
+        required: true
+        type: string
+  /v2/upload:
+    post:
+      description: Upload upload API
+      operationId: upload
+      parameters:
+      - description: User's token
+        in: query
+        name: Token
+        required: true
+        type: string
+      - $ref: '#/definitions/ReadCloser'
+        description: The file to upload.
+        in: formData
+        name: Upfile
+produces:
+- application/json
+responses:
+  filesBadRequest:
+    description: FilesBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  filesInternalServerError:
+    description: FilesInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  filesOK:
+    description: FilesOK file list
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      type: object
+  resizeBadRequest:
+    description: ResizeBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  resizeExistsBadRequest:
+    description: ResizeExistsBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  resizeExistsInternalServerError:
+    description: ResizeExistsInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  resizeExistsOK:
+    description: ResizeExistsOK resize result
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Resize'
+  resizeInternalServerError:
+    description: ResizeInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  resizeOK:
+    description: ResizeOK resize result
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Resize'
+  resultBadRequest:
+    description: ResultBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  resultInternalServerError:
+    description: ResultInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  resultOK:
+    description: ResultOK file resize result
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Resize'
+  tokenBadRequest:
+    description: TokenBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  tokenInternalServerError:
+    description: TokenInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  tokenOK:
+    description: TokenOK get token
+    headers:
+      body:
+        description: 'In: Body'
+        type: string
+  uploadBadRequest:
+    description: UploadBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  uploadInternalServerError:
+    description: UploadInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  uploadOK:
+    description: UploadOK upload result
+    headers:
+      body:
+        description: 'In: Body'
+        type: string
+  v2filesBadRequest:
+    description: V2filesBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  v2filesInternalServerError:
+    description: V2filesInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  v2filesOK:
+    description: V2filesOK file list
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      type: object
+  v2resizeBadRequest:
+    description: V2resizeBadRequest Bad Request
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  v2resizeInternalServerError:
+    description: V2resizeInternalServerError Fatal
+    headers:
+      body:
+        description: 'In: Body'
+    schema:
+      $ref: '#/definitions/Error'
+  v2resizeOK:
+    description: V2resizeOK resize result. execution id
+    headers:
+      body:
+        description: 'In: Body'
+        type: string
+swagger: "2.0"
