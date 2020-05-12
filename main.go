@@ -19,7 +19,7 @@ import (
 const Port = 8085
 const Region = "us-east-2"
 const ID = "ID"
-const Sercret = "Secret"
+const Secret = "Secret"
 
 var log = logging.MustGetLogger("apimediaservice")
 var format = logging.MustStringFormatter(
@@ -76,7 +76,7 @@ func main() {
 	sess, err := session.NewSession(
 		&aws.Config{
 			Region:      aws.String(Region),
-			Credentials: credentials.NewStaticCredentials(ID, Sercret, ""),
+			Credentials: credentials.NewStaticCredentials(ID, Secret, ""),
 		},
 	)
 	if err != nil {
