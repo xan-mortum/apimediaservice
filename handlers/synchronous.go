@@ -16,8 +16,6 @@ import (
 	"path/filepath"
 )
 
-const Bucket = "xan.resizeimage"
-
 type SynchronousHandler struct {
 	Logger              interfaces.Logger
 	ImageManager        imagemanager.ImageManager
@@ -25,6 +23,7 @@ type SynchronousHandler struct {
 	UserImageRepository *repositories.UserImageRepository
 	ImageRepository     *repositories.ImageRepository
 	ResizeRepository    *repositories.ResizeRepository
+	bucket           string
 }
 
 func NewSynchronousHandler(
@@ -34,6 +33,7 @@ func NewSynchronousHandler(
 	userImageRepository *repositories.UserImageRepository,
 	imageRepository *repositories.ImageRepository,
 	resizeRepository *repositories.ResizeRepository,
+	bucket           string,
 ) *SynchronousHandler {
 	return &SynchronousHandler{
 		Logger:              logger,
@@ -43,6 +43,7 @@ func NewSynchronousHandler(
 		UserImageRepository: userImageRepository,
 		ImageRepository:     imageRepository,
 		ResizeRepository:    resizeRepository,
+		bucket: bucket,
 	}
 }
 
@@ -98,7 +99,7 @@ func (handler *SynchronousHandler) ResizeHandler(params operations.ResizeParams)
 	//заливаем на S3
 	uploader := s3manager.NewUploader(handler.S3Session)
 	upload, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(Bucket),
+		Bucket: aws.String(handler.bucket),
 		Key:    aws.String(file.Name),
 		Body:   fileToUpload,
 	})
@@ -120,7 +121,7 @@ func (handler *SynchronousHandler) ResizeHandler(params operations.ResizeParams)
 
 	//заливаем на S3
 	thumbUpload, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(Bucket),
+		Bucket: aws.String(handler.bucket),
 		Key:    aws.String(thumbFile.Name),
 		Body:   thumbToUpload,
 	})
@@ -210,7 +211,7 @@ func (handler *SynchronousHandler) ResizeExistsHandler(params operations.ResizeE
 	buf := aws.NewWriteAtBuffer([]byte{})
 	downloader := s3manager.NewDownloader(handler.S3Session)
 	_, err = downloader.Download(buf, &s3.GetObjectInput{
-		Bucket: aws.String(Bucket),
+		Bucket: aws.String(handler.bucket),
 		Key:    aws.String(fileInfo.FileName),
 	})
 	if err != nil {
@@ -244,7 +245,7 @@ func (handler *SynchronousHandler) ResizeExistsHandler(params operations.ResizeE
 	//загруаем на S3
 	uploader := s3manager.NewUploader(handler.S3Session)
 	thumbUpload, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(Bucket),
+		Bucket: aws.String(handler.bucket),
 		Key:    aws.String(thumbFile.Name),
 		Body:   thumbToUpload,
 	})

@@ -11,8 +11,6 @@ import (
 	"github.com/xan-mortum/apimediaservice/repositories"
 )
 
-const Bucket = "xan.resizeimage"
-
 //штука которая асинхронно обрабатывает файлы
 type ImageProcessor struct {
 	done             chan bool
@@ -23,6 +21,7 @@ type ImageProcessor struct {
 	imageRepository  *repositories.ImageRepository
 	s3Session        *session.Session
 	im               imagemanager.ImageManager
+	bucket           string
 }
 
 type ResizeTask struct {
@@ -38,6 +37,7 @@ func NewImageProcessor(
 	ir *repositories.ImageRepository,
 	s3 *session.Session,
 	im imagemanager.ImageManager,
+	bucket string,
 ) *ImageProcessor {
 	return &ImageProcessor{
 		done:             make(chan bool),
@@ -48,6 +48,7 @@ func NewImageProcessor(
 		imageRepository:  ir,
 		s3Session:        s3,
 		im:               im,
+		bucket:           bucket,
 	}
 }
 
@@ -100,7 +101,7 @@ func (ip *ImageProcessor) runTusk(task ResizeTask) {
 	buf := aws.NewWriteAtBuffer([]byte{})
 	downloader := s3manager.NewDownloader(ip.s3Session)
 	_, err := downloader.Download(buf, &s3.GetObjectInput{
-		Bucket: aws.String(Bucket),
+		Bucket: aws.String(ip.bucket),
 		Key:    aws.String(task.Image),
 	})
 	if err != nil {
@@ -137,7 +138,7 @@ func (ip *ImageProcessor) runTusk(task ResizeTask) {
 	//загруаем на S3
 	uploader := s3manager.NewUploader(ip.s3Session)
 	thumbUpload, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(Bucket),
+		Bucket: aws.String(ip.bucket),
 		Key:    aws.String(thumbFile.Name),
 		Body:   thumbToUpload,
 	})

@@ -20,6 +20,7 @@ const Port = 8085
 const Region = "us-east-2"
 const ID = "ID"
 const Secret = "Secret"
+const Bucket = "xan.resizeimage"
 
 var log = logging.MustGetLogger("apimediaservice")
 var format = logging.MustStringFormatter(
@@ -127,6 +128,7 @@ func main() {
 		userImageRepository,
 		imageRepository,
 		resizeRepository,
+		Bucket,
 	)
 
 	api.TokenHandler = operations.TokenHandlerFunc(mockHandler.TokenHandler)
@@ -143,6 +145,7 @@ func main() {
 		imageRepository,
 		sess,
 		imageManager,
+		Bucket,
 	)
 	imageProcessor.Start()
 	defer imageProcessor.Stop()
